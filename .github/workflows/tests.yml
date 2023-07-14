@@ -1,0 +1,38 @@
+name: Test
+
+on:
+  pull_request:
+    branches: [ develop, main ]
+  push:
+    branches:
+      - '*'
+
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Install Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.11
+      - name: create .env file
+        run: |
+          echo FASTAPI_HOST=${{ secrets.FASTAPI_HOST }} >> .env
+          echo FASTAPI_PORT=${{ secrets.FASTAPI_PORT }} >> .env
+          echo TWILIO_ACCOUNT_SID=${{ secrets.SECRET_KEY }} >> .env
+          echo TWILIO_AUTH_TOKEN=${{ secrets.JWT_ACCESS_TTL }} >> .env
+          echo TWILIO_PHONE_NUMBER=${{ secrets.JWT_ALGORITHM }} >> .env
+          echo TWILIO_WHATSAPP_PHONE_NUMBER=${{ secrets.JWT_REFRESH_TTL }} >> .env
+          echo EMAIL_HOST_USER=${{ secrets.EMAIL_HOST_USER }} >> .env
+          echo EMAIL_HOST_PASSWORD=${{ secrets.EMAIL_HOST_PASSWORD }} >> .env
+          echo EMAIL_HOST=${{ secrets.EMAIL_HOST }} >> .env
+      - name: Build docker
+        run: docker-compose up -d --build
+      - name: Test
+        env:
+          COMPOSE_INTERACTIVE_NO_CLI: 1
+        run: docker-compose exec -T app pytest

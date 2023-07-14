@@ -1,0 +1,25 @@
+version: "3.1"
+
+services:
+  app:
+    build: .
+    entrypoint: "/entrypoint.sh"
+    restart: on-failure
+    ports:
+      - '8000:8000'
+    volumes:
+      - .:/auth
+    depends_on:
+      - mongodb
+    env_file:
+      - .env
+
+  mongodb:
+    image: mongo:4.4.4-bionic
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./mongo_data:/data/db
+
+volumes:
+  mongo_data:
