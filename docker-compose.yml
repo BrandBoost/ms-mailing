@@ -1,18 +1,21 @@
 version: "3.1"
 
 services:
-  app:
+  fastapi_server:
     build: .
+    container_name: 'fastapi_mailing'
     entrypoint: "/entrypoint.sh"
-    restart: on-failure
+    restart: always
+    expose:
+      - ${FASTAPI_PORT}
     ports:
-      - '8000:8000'
+      - ${FASTAPI_PORT}:${FASTAPI_PORT}
     volumes:
-      - .:/auth
-    depends_on:
-      - mongodb
+      - "./:/mailing"
     env_file:
       - .env
+    depends_on:
+      - mongodb
 
   mongodb:
     image: mongo:4.4.4-bionic
@@ -22,4 +25,5 @@ services:
       - ./mongo_data:/data/db
 
 volumes:
+  data_fastapi_mailing:
   mongo_data:
