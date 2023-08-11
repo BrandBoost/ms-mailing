@@ -27,6 +27,7 @@ pytest-asyncio = "*"
 twilio = "==8.3.0"
 pytest-mock = "*"
 httpx = "*"
+python-multipart = "*"
 
 [dev-packages]
 
