@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.api import v1_router
 from app.config import logger
+from app.middlewares.auth_middleware import ApiKeyMiddleware
 
 app = FastAPI()
 
@@ -13,6 +14,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.add_middleware(ApiKeyMiddleware)
 
 
 @app.on_event("startup")
